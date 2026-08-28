@@ -2,7 +2,7 @@
 ## TP 3
 ### Objectifs
 
-* Rédige le code pour le suiveur de ligne.
+* Rédigez le code pour le suiveur de ligne.
 
 #### Structure du code
 
@@ -10,13 +10,13 @@ créez trois fichiers python "main.py", et par exemple "line_detector.py" et "MC
 
 Chacun a un rôle bien défini :
 
-main.py -> programme principale, fait tourner le capteur de suivi de ligne.
+main.py -> programme principal, fait tourner le capteur de suivi de ligne.
 line_detector.py -> Lit les capteurs et détecte la ligne.
 MCP3208.py -> contient les informations pour lire les capteurs IR, analyser les valeurs, afficher les valeurs des capteurs.
 
 #### MCP3208.py
 
-Pour commencer, importez "spidev" pour communiquer avec les périphériques SPI sur la Rasberry Pi.
+Pour commencer, importez "spidev" pour communiquer avec les périphériques SPI sur la Raspberry Pi.
 
 Utilisez des constantes pour construire la commande à envoyer à l'ADC.
 ```python
@@ -38,13 +38,13 @@ class MCP3208:
         self.vref = vref
 ```
 
-Définissez une méthode pour lire la valeur brute et vérifiez si le numéro du canal est visible sinon il souléve l'erreur.
+Définissez une méthode pour lire la valeur brute et vérifiez si le numéro du canal est valide sinon elle soulève l'erreur.
 
 ```python
-    def reac_channel(self, channel);
+    def read_channel(self, channel):
 ```
 
-Construisez une commande SPI pour le MCP3208. Ensuite Envoyez la commande pour reçevoir la réponse de 3octets de l'ADC. Convertir le résultat ADC 12 bits à partir des octets de réponse et enfin retournez la valeur.
+Construisez une commande SPI pour le MCP3208. Ensuite envoyez la commande pour recevoir la réponse de 3 octets de l'ADC. Convertir le résultat ADC 12 bits à partir des octets de réponse et enfin retournez la valeur.
 
 ```python
     command = [BIT_START | BIT_CONV_SINGLE | (channel >> 2), (channel & 3) << 6, 0]
@@ -56,13 +56,13 @@ Construisez une commande SPI pour le MCP3208. Ensuite Envoyez la commande pour r
 Définissez une méthode pour lire la tension réelle d'un canal.
 
 ```python
-    def read_voltage(self, channel)
+    def read_voltage(self, channel):
 ```
 
 Définissez une méthode pour lire tous les 8 canaux en tension et retourner une liste de 8 valeurs.
 
 ```python
-    def read_all_channels(self);
+    def read_all_channels(self):
 ```
 
 Fermez proprement la communication SPI pour libérer le périphérique et éviter les erreurs.
@@ -87,7 +87,7 @@ THRESHOLD = 1.5
 Définissez une fonction pour lire les 8 capteurs et détecter la position de la ligne.
 
 ```python
-    def detect_line(IFR, threshold=THRESHOLD)
+    def detect_line(IFR, threshold=THRESHOLD):
 ```
 
 Lisez les tensions de chaque capteurs connecté aux 8 canaux de l'ADC, et affichez les valeurs en 2 décimales pour monitoring (=surveillance).
@@ -106,7 +106,7 @@ Lisez les tensions de chaque capteurs connecté aux 8 canaux de l'ADC, et affich
 
 Mettez une logique de base pour suivre la ligne, c'est à dire comparez chaque tension à "threshold" (=seuil pour détecter la ligne).
 
-Enfin affichez la position détectée à côté des tension des capteurs, marquez une pause pour éviter de saturer le CPU (=microprocesseur) et la console et renvoyez la position détectée afin que le programme principal "main.py" puisse l'utliser.
+Enfin affichez la position détectée à côté des tensions des capteurs, marquez une pause pour éviter de saturer le CPU (=microprocesseur) et la console et renvoyez la position détectée afin que le programme principal "main.py" puisse l'utiliser.
 
 ```python
     print(position)
@@ -141,17 +141,19 @@ Affichez un message indiquant que le suiveur de ligne commence à suivre la lign
 mettez une boucle principale pour lire les capteurs en continue.
 
 ```python
-while True:
-    position = detect_line(IFR, threshold=THRESHOLD)
-    time.sleep(DELAY)
+try:
+    print("Line follower started.")
+    while True:
+        position = detect_line(IFR, threshold=THRESHOLD)
+        time.sleep(DELAY)
 ```
-Mettez une gestion de lt'interrupteur clavier, si l'utilisateur appuie sur "ctrl+C" le programme se ferme correctement la communication SPI.
+Mettez une gestion de l'interruption clavier, si l'utilisateur appuie sur "ctrl+C" le programme ferme correctement la communication SPI.
 
 ```python
 except KeyboardInterrupt:
-    # Handles manuel interruption (Ctrl+C)
+    # Handles manual interruption (Ctrl+C)
     IFR.close()
-    print("\nPProgram stopped.")
+    print("\nProgram stopped.")
 ```
 
 Mettez une gestion pour les autres erreurs, si une erreur inattendue survient alors la communication SPI se ferme pour ne pas bloquer le périphérique et affiche l'erreur pour le debug.
@@ -159,11 +161,12 @@ Mettez une gestion pour les autres erreurs, si une erreur inattendue survient al
 ```python
 except Exception as e:
     IFR.close()
-    printf("Error detected: {e}")
+    print(f"Error detected: {e}")
 ```
 Enfin, mettez une exécution conditionnelle pour vérifier que le fichier est exécuté directement et si oui, alors il appelle "main()" pour démarrer le programme.
 
 ```python
-__if __name__ == "__main__":
+if __name__ == "__main__":
+    main()
 ```
 

@@ -10,7 +10,7 @@
    5. Sécuriser la connexion ssh avec une clé 
 
 #### Flasher la carte SD
-Allez sur https://www.raspberrypi.com/software/ et installez la Raspberry selon votre type de PC (Winodws, MacOS).
+Allez sur https://www.raspberrypi.com/software/ et installez Raspberry Pi Imager selon votre type de PC (Linux).
 
 ![](img/image_01.png)
 
@@ -27,13 +27,14 @@ Sélectionnez le support d'installation de l'OS, sélectionnez la carte SD
 
 ![](img/image_05.png)
 
-Validez la configuration, la carte SD est prête à être flachée. Cliquez sur Next et choisissez "Edit settings" 
+Validez la configuration, la carte SD est prête à être flashée. Cliquez sur Next et choisissez "Edit settings" 
 
 ![](img/image_06.png)
 
 Modifiez quelques paramètres :
-* Le hostname -> Choisir la forme "nom de la salle-tes initiales-initiales du binôme"
+* Le hostname -> Choisir la forme "nom de la salle-vos initiales-initiales du binôme"
 * nom d'utilisateur et un mot de passe (le mot de passe sera nécessaire à chaque fois donc à retenir)
+* Dans l'onglet "Services", activez "Enable SSH" et l'authentification par mot de passe (nécessaire pour se connecter en headless, sans écran ni clavier branchés sur la Raspberry)
 
 ![](img/image_07.png)
 
@@ -44,50 +45,31 @@ Validez la copie de l'image de l'OS Linux sur la carte SD.
 
 Le processus dure quelques minutes, la fichiers sont copiés et une vérifications de la copie a lieu.
 
-![](img/image_9.png)
+![](img/image_09.png)
 ![](img/image_10.png)
 
-une fois fini, retirez la carte SD et réinsérez la carte SD flachée. Ensuite, éjectez la carte SD en toute sécrité puis insérez la dans la Raspberry Pi.
+une fois fini, éjectez la carte SD en toute sécurité puis insérez-la dans la Raspberry Pi.
 
-Assurez vous que la Raspberry est bien allumée et connectée au réseau WIfi. 
+Assurez-vous que la Raspberry est bien allumée et connectée au réseau Wifi de la salle. 
 
-Appuyez sur "Windows + R" et tapez "cmd" puis "Entrée"
+Le réseau de la salle est géré par un routeur Mikrotik administré par le professeur : vous n'avez pas la main sur son interface d'administration, donc pas moyen d'aller y consulter la liste des baux DHCP vous-même. On utilise à la place le hostname mDNS que vous avez défini dans Raspberry Pi Imager, qui permet de joindre la Raspberry par son nom directement, sans connaître son adresse IP.
 
-![](img/image_11.png)
-
-Tapez, ensuite, "ipconfig"
-
-![](img/image_12.png)
-
-cherchez la section correspendant au réseau Wifi appelée "carte réseau sans fil Wifi" 
-
-![](img/image_13.png)
-
-Regardez la ligne "Passerelle par défaut..... : 'adresse ip'"
-c'est l'adresse IP du routeur.
-
-Allez sur internet et tapez sur la barre de recherche "http://192.168.65.1/#IP:DHCP_Server.Leases" en remplacant"192.168.65.1" par l'adresse IP de votre Wifi.
-
-Regardez l'adresse IP de la Raspberry et la copier.
-
-Ouvrez le terminal et tapez "ping 'adresse IP' "
+Ouvrez un terminal sur votre PC Linux et tapez "ping nom_de_votre_hostname.local" (remplacez "nom_de_votre_hostname" par le hostname choisi à l'étape de flash).
 
 ![](img/image_14.png)
 
-si vous avez les mêmes réponses affichées à l'écran, ça veut dire que votre PC voit votre Raspberry sur le réseau donc la connection réseau fonctionne. (pour l'arrêter, tapez : "ctrl + C")
+si vous avez des réponses affichées à l'écran, ça veut dire que votre PC voit votre Raspberry sur le réseau donc la connexion réseau fonctionne. (pour l'arrêter, tapez : "ctrl + C")
 
-tapez "sudo systemctl status ssh"
+Si le ping ne répond pas (résolution mDNS parfois indisponible selon le PC), deux solutions de secours :
+* scannez le sous-réseau avec nmap : "nmap -sn 192.168.X.0/24" (remplacez X par le sous-réseau de la salle) et repérez l'IP dont le nom d'hôte correspond au hostname choisi.
+* demandez au professeur l'adresse IP attribuée à votre Raspberry sur le Mikrotik.
 
-![](img/image_15.png)
-
-Si vous voyez "active (running)" alors le SSH est déjà activé. 
-
-Tapez "ssh user@adresse IP". Il vous demandera votre mot de passe (rien ne sera aficher pendant que vous écrirez, c'est normal)
+Tapez "ssh utilisateur@nom_de_votre_hostname.local" (ou "ssh utilisateur@adresse_ip" si vous êtes passés par la solution de secours). Il vous demandera votre mot de passe (rien ne sera affiché pendant que vous écrirez, c'est normal).
 
 ![](img/image_16.png)
 
 S'il y a bien écrit "Linux rpi-test-B3 ...
-Last login: Wed Nov  5 ..." alors vous êtes bien connecté à votre Rasberry via le SSH.
+Last login: Wed Nov  5 ..." alors vous êtes bien connectés à votre Raspberry via SSH.
 
 Allez sur VS code et cliquez sur le petit symbole en bleu en bas à gauche de l'écran.
 
@@ -97,18 +79,18 @@ Cliquez sur "Connect to host"
 
 ![](img/image_18.png)
 
-Mettez "votre nom d'utilisateur@l'adresse IP"
+Mettez "votre nom d'utilisateur@nom_de_votre_hostname.local"
 
 ![](img/image_19.png)
 
-Il vous demandera sur quelle platefrome vous êtes (Linux, Windows ou MacOS), vous mettez "Linux"
+Il vous demandera sur quelle plateforme vous êtes (Linux, Windows ou MacOS), vous mettez "Linux"
 
 Entrez votre mot de passe.
 Revenez sur votre terminal et marquez "mkdir 'nom de votre dossier'" ensuite "cd 'nom de votre dossier'". Le dossier est creer, puis vous tapez "ls" puis "cd..".
 
 ![](img/image_20.png)
 
-Revenez sur VS code et ouvrez le dossier, créez, ensuite, 3 fichier "main.py" "MCP3208.py" et "votre composant.py" 
+Revenez sur VS code et ouvrez le dossier, créez, ensuite, 3 fichiers "main.py" "MCP3208.py" et "votre_composant.py" 
 
 ![](img/image_21.png) 
 

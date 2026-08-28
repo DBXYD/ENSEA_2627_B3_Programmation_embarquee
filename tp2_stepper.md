@@ -6,16 +6,16 @@
   
 #### Structure du code
 Créez trois fichiers python 
-* main.py : programme principale, initialise et teste le moteur.
+* main.py : programme principal, initialise et teste le moteur.
 * config.py : contient les constantes tels que les pins, direction, vitesse...
 * driver.py : contient la logique pour faire bouger le moteur
 
 #### Driver.py
-Ce fichier est le coeur du code, contrôle le moteur via les GPIO.
+Ce fichier est le cœur du code, contrôle le moteur via les GPIO.
 
 Pour commencer, importez RPI.GPIO et time :
 
-* RPI.GPIO : bibliothéque pour contrôler les broches GPIO de la Raspberry Pi.
+* RPI.GPIO : bibliothèque pour contrôler les broches GPIO de la Raspberry Pi.
 * time : permet de faire des pauses entre les impulsions envoyées au moteur.
 
 Importez les constantes de config.py.
@@ -42,15 +42,21 @@ class TMC2225:
         self.dir_pin = dir_pin
         self.steps_per_rev = steps_per_rev
         self.microstep = microstep
+
+        GPIO.setup(self.step_pin, GPIO.OUT)
+        GPIO.setup(self.dir_pin, GPIO.OUT)
+
+        self.set_speed(speed_rpm)
+        self.set_direction(direction)
 ```
 
 Définissez un "set_speed" pour convertir la vitesse en fréquence d'impulsions (Hz) (plus la fréquence est élevée, plus le moteur tourne vite) 
 
 ```python
-self.set_speed(self, speed_rpm):
+def set_speed(self, speed_rpm):
 ```
 
-Définissez un "set_direction" pour définir le sens de rotation du moteur (avant/arriére)
+Définissez un "set_direction" pour définir le sens de rotation du moteur (avant/arrière)
 
 ```python
 def set_direction(self, direction):
@@ -65,27 +71,27 @@ def step(self, steps=1):
 Définissez "rotate" pour faire tourner le moteur d'un angle en degrés, cette fonction permet de calculer combien de pas correspondent à un angle donné (en degrés)
 
 ```python
-def rotate(self, angle);
+def rotate(self, angle):
 ```
 définissez "info" pour afficher les informations du moteur, la fonction peut servir à afficher les valeurs actuelles des paramètres du moteurs.
 
 ```python
-def info(self);
+def info(self):
 ```
 
-Enfin, définissez un "cleanup" pour nettoyer les GPIO du moteur, il permet de les libérer pour éviter les problémes.
+Enfin, définissez un "cleanup" pour nettoyer les GPIO du moteur, il permet de les libérer pour éviter les problèmes.
 
 ```python
-def cleaup(self);
+def cleanup(self):
 ```
 
 #### main.py
 Ce fichier initialise, affiche les informations et teste la rotation du moteur. C'est le programme d'exécution.
 
-Pour commencer, importez TMC2225 et time aisni que les constantes de motor.config.
+Pour commencer, importez TMC2225 et time ainsi que les constantes de motor.config.
 
 * TMC2225 : Contient les fonctions pour piloter le moteur.
-* motor.config : Variables qui définissent les numéros des pins GPIO, la vitesse en RPM et la direction initiale (avant/arriére)
+* motor.config : Variables qui définissent les numéros des pins GPIO, la vitesse en RPM et la direction initiale (avant/arrière)
 
 ```python
 from motor.driver import TMC2225
