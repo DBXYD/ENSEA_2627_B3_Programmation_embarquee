@@ -1,19 +1,21 @@
-## TP 4
+## TP 5
 
 ### Objectifs
 
 * Rédiger le code pour le moteur
-  
+
 #### Structure du code
-Créez trois fichiers python 
+**🛠️ Manipulation / code** Créez trois fichiers Python : `main.py`, `config.py` et `driver.py`, dans une structure de paquet permettant les imports `motor.driver` et `motor.config`. Chacun a un rôle bien défini :
 * main.py : programme principal, initialise et teste le moteur.
 * config.py : contient les constantes tels que les pins, direction, vitesse...
 * driver.py : contient la logique pour faire bouger le moteur
 
 #### Driver.py
+
+**📖 Lecture** Le driver TMC2225 reçoit des impulsions `STEP` et un niveau logique `DIR`. La vitesse dépend de la fréquence des impulsions, tandis que le nombre d'impulsions détermine le déplacement.
 Ce fichier est le cœur du code, contrôle le moteur via les GPIO.
 
-Pour commencer, importez RPI.GPIO et time :
+**🛠️ Manipulation / code** Pour commencer, importez RPI.GPIO et time :
 
 * RPI.GPIO : bibliothèque pour contrôler les broches GPIO de la Raspberry Pi.
 * time : permet de faire des pauses entre les impulsions envoyées au moteur.
@@ -85,7 +87,17 @@ Enfin, définissez un "cleanup" pour nettoyer les GPIO du moteur, il permet de l
 def cleanup(self):
 ```
 
+**💭 Réflexion** Répondez aux questions suivantes :
+
+1. Pourquoi une impulsion `STEP` ne doit-elle pas être remplacée par un simple changement permanent de niveau ?
+2. Quelle est la relation entre `speed_rpm`, `steps_per_rev` et la fréquence des impulsions ?
+3. Comment le micro-pas modifie-t-il le nombre d'impulsions nécessaires pour un tour ?
+4. Pourquoi faut-il appeler `cleanup()` même si le programme s'arrête à cause d'une erreur ?
+5. Quelles précautions faut-il prendre avant de brancher ou de déplacer un moteur piloté par le driver ?
+
 #### main.py
+
+**🛠️ Manipulation / code** Écrivez le programme de test, faites d'abord tourner le moteur à faible vitesse et vérifiez le sens de rotation avant d'utiliser des angles importants.
 Ce fichier initialise, affiche les informations et teste la rotation du moteur. C'est le programme d'exécution.
 
 Pour commencer, importez TMC2225 et time ainsi que les constantes de motor.config.
@@ -134,6 +146,15 @@ Mettez une pause avec "time.sleep"
 
 Nettoyez les GPIO avec la fonction "cleanup"
 
+**💭 Réflexion** Vérifiez les points suivants dans votre compte rendu :
+
+1. Combien de pas sont nécessaires pour les angles demandés par `TEST_ANGLE_MOTOR1` et `TEST_ANGLE_MOTOR2` ?
+2. Que se passe-t-il si l'angle demandé n'est pas un multiple du pas moteur ?
+3. Comment détecteriez-vous qu'un moteur a perdu des pas ?
+4. Pourquoi un test de `5000` degrés peut-il être inadapté pour une première mise sous tension ?
+
 #### config.py
 
-Mettre toutes les constantes dont nous avons besoin.
+**🛠️ Manipulation / code** Regroupez ici les broches, la vitesse par défaut, le nombre de pas par tour, le micro-pas et les constantes de direction. Vérifiez que les numéros de broches correspondent au câblage réel.
+
+**💭 Réflexion** Expliquez pourquoi les paramètres matériels doivent être séparés du code du driver. Quelle modification doit être possible sans réécrire la classe `TMC2225` ?

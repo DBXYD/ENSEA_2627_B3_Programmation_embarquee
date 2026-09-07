@@ -1,12 +1,11 @@
-
-## TP 3
+## TP 4
 ### Objectifs
 
 * Rédigez le code pour le suiveur de ligne.
 
 #### Structure du code
 
-créez trois fichiers python "main.py", et par exemple "line_detector.py" et "MCP3208.py".
+**🛠️ Manipulation / code** Créez trois fichiers Python : `main.py`, `line_detector.py` et `MCP3208.py`.
 
 Chacun a un rôle bien défini :
 
@@ -16,7 +15,9 @@ MCP3208.py -> contient les informations pour lire les capteurs IR, analyser les 
 
 #### MCP3208.py
 
-Pour commencer, importez "spidev" pour communiquer avec les périphériques SPI sur la Raspberry Pi.
+**📖 Lecture** Le MCP3208 est un convertisseur analogique-numérique 12 bits. Il transforme une tension comprise entre 0 V et `vref` en une valeur entière comprise entre 0 et 4095, transmise à la Raspberry Pi par SPI.
+
+**🛠️ Manipulation / code** Pour commencer, importez "spidev" pour communiquer avec les périphériques SPI sur la Raspberry Pi.
 
 Utilisez des constantes pour construire la commande à envoyer à l'ADC.
 ```python
@@ -71,7 +72,16 @@ Fermez proprement la communication SPI pour libérer le périphérique et évite
     def close(self):
 ```
 
+**💭 Réflexion** Répondez aux questions suivantes :
+
+1. Pourquoi la valeur maximale d'un ADC 12 bits est-elle 4095 et non 4096 ?
+2. Quelle tension correspond à une mesure brute de 2048 avec `vref = 3.3 V` ?
+3. Quel serait l'effet d'une mauvaise valeur de `vref` sur les tensions calculées ?
+4. Pourquoi faut-il vérifier le numéro du canal avant de construire la commande SPI ?
+
 #### line_detector.py
+
+**🛠️ Manipulation / code** Implémentez la lecture des huit capteurs et la logique qui transforme leurs tensions en une position de ligne.
 
 Importez MCP3208 et time.
 
@@ -114,7 +124,11 @@ Enfin affichez la position détectée à côté des tensions des capteurs, marqu
     return position
 ```
 
+**💭 Réflexion** Le seuil `THRESHOLD = 1.5` est un choix expérimental. Expliquez comment le mesurer ou le régler à partir des valeurs observées sur le sol clair et sur la ligne. Indiquez aussi ce que doit faire le programme si aucun capteur ou plusieurs capteurs détectent la ligne.
+
 #### main.py
+
+**🛠️ Manipulation / code** Assemblez l'ADC et le détecteur dans `main.py`, puis testez l'arrêt par `Ctrl+C`.
 
 Importez MCP3208, detect_line et time.
 
@@ -169,4 +183,6 @@ Enfin, mettez une exécution conditionnelle pour vérifier que le fichier est ex
 if __name__ == "__main__":
     main()
 ```
+
+**💭 Réflexion** Pourquoi le bloc `try`/`except` doit-il fermer SPI dans les cas `KeyboardInterrupt` et `Exception` ? Quelle différence y a-t-il entre une interruption utilisateur et une erreur inattendue ?
 

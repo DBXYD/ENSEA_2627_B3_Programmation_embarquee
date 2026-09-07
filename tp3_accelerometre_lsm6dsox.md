@@ -1,11 +1,11 @@
-## TP 2
+## TP 3
 ### Objectifs
 
 * Rédigez le code pour l'accéléromètre en i2C.
 
 #### Structure du code
 
-créez trois fichiers python "main.py", et par exemple "setting.py" et "drv_lsm6dsox.py".
+**🛠️ Manipulation / code** Créez trois fichiers Python : `main.py`, `setting.py` et `drv_lsm6dsox.py`.
 
 Chacun a un rôle bien défini :
 * main.py -> programme principal, utilise le driver pour afficher les valeurs physiques du capteur.
@@ -14,7 +14,9 @@ Chacun a un rôle bien défini :
 
 #### setting.py
 
-Déclarez l'adresse i2C du capteur LSM6DSOX avec une valeur hex pour pouvoir parler au capteur sur le bus i2C.
+**📖 Lecture** Le fichier `setting.py` regroupe les constantes qui décrivent le capteur et évite de disperser les valeurs numériques dans le programme.
+
+**🛠️ Manipulation / code** Déclarez l'adresse i2C du capteur LSM6DSOX avec une valeur hex pour pouvoir parler au capteur sur le bus i2C.
 ```python
 LSM6DSOX_ADDR = 0x6A
 ```
@@ -41,7 +43,7 @@ FQ3330HZ      = 0x90  # 3.33 kHz
 FQ6660HZ      = 0xA0  # 6.66 kHz
 ```
 
-Configurez la plage de l'accéléromètreavec des constantes qui se combineront avec le ODR (=fréquence d'échantillonnage).
+Configurez la plage de l'accéléromètre avec des constantes qui se combineront avec le ODR (=fréquence d'échantillonnage).
 ```python
 FS_2G  = 0x00
 FS_16G = 0x04
@@ -114,6 +116,8 @@ SF_G_2000DPS  = 0.07
 
 #### drv_lsm6dsox.py
 
+**🛠️ Manipulation / code** Implémentez le driver en vous appuyant sur les registres et les constantes définis précédemment.
+
 D'abord importez smbus2, time et setting.
 
 * smbus2 : fournit les fonctions i2C pour Raspberry Pi.
@@ -161,13 +165,23 @@ Définissez une fonction pour lire le gyroscope pour faire les mêmes choses que
     def read_gyro(self):
 ```
 
-Définissez une fonction pour convertir un entier non signé en entier signé selon la représentation en deux-complement.
+Définissez une fonction pour convertir un entier non signé en entier signé selon la représentation en complément à deux.
 
 ```python
     def _twos_complement(self, val, bits):
 ```
 
+**💭 Réflexion** Répondez aux questions suivantes :
+
+1. Pourquoi une mesure sur deux octets doit-elle être interprétée en complément à deux ?
+2. Comment reconnaît-on qu'une valeur signée est négative ?
+3. Pourquoi faut-il activer `BDU` avant de lire les six octets d'un bloc de mesures ?
+4. Quel est le rôle de l'auto-incrément d'adresse `IF_INC` ?
+5. Que peut-on déduire si le capteur répond à l'adresse `0x6B` mais pas à `0x6A` ?
+
 #### main.py
+
+**🛠️ Manipulation / code** Écrivez le programme principal, lancez-le sur la Raspberry Pi et observez les mesures lorsque le capteur est immobile puis incliné.
 
 Commencez par importer drv_lsm6dsox, setting et math
 * from drv_lsm6dsox import * : importe tout le driver étudié juste avant.
@@ -214,3 +228,10 @@ Marquez une pause pour laisser le capteur générer de nouvelles mesures.
 ```python
         time.sleep(READ_DELAY)
 ```
+
+**💭 Réflexion** Dans votre compte rendu :
+
+1. Quelle valeur d'accélération doit-on observer approximativement sur un axe aligné avec la gravité lorsque le capteur est immobile ?
+2. Pourquoi les angles calculés avec `atan2` sont-ils plus robustes qu'un simple rapport entre deux axes ?
+3. Quelle est l'influence de `READ_DELAY` sur la fréquence d'affichage et la charge du processeur ?
+4. Que se passe-t-il si la plage `FS_2G` est dépassée ? Proposez une configuration adaptée à des mouvements plus brusques.

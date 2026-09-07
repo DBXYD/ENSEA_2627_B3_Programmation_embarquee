@@ -10,6 +10,8 @@
    5. Sécuriser la connexion ssh avec une clé 
 
 #### Flasher la carte SD
+**🛠️ Manipulation / code** Réalisez le flashage avec Raspberry Pi Imager en suivant les étapes ci-dessous.
+
 Allez sur https://www.raspberrypi.com/software/ et installez Raspberry Pi Imager selon votre type de PC (Linux).
 
 ![](img/image_01.png)
@@ -33,27 +35,123 @@ Validez la configuration, la carte SD est prête à être flashée. Cliquez sur 
 ![](img/image_06.png)
 
 Modifiez quelques paramètres :
-* Le hostname -> Choisir la forme "nom de la salle-vos initiales-initiales du binôme"
-* nom d'utilisateur et un mot de passe (le mot de passe sera nécessaire à chaque fois donc à retenir)
-* Dans l'onglet "Services", activez "Enable SSH" et l'authentification par mot de passe (nécessaire pour se connecter en headless, sans écran ni clavier branchés sur la Raspberry)
+* Le hostname : Choisir la forme <salle>-<initiales> (remplacer salle par la salle de TP et initiale par vos initiales)
+* Nom d'utilisateur et un mot de passe (le mot de passe sera nécessaire à chaque connexion)
+* Dans l'onglet « Services », activez SSH et l'authentification par mot de passe pour permettre la première connexion sans écran ni clavier.
+
+**💭 Réflexion** Notez le hostname et le nom d'utilisateur choisis. Pourquoi est-il nécessaire de définir ces informations avant le premier démarrage d'une Raspberry Pi utilisée sans écran ?
 
 ![](img/image_07.png)
 
 Validez les modifications apportées et les appliquer a l'installation. 
-Validez la copie de l'image de l'OS Linux sur la carte SD.
+Validez la copie de l'image de l'OS Linux sur la carte SD. La copie sur la carte SD nécessite les droits administrateurs que vous n'avez pas sur les postes de laboratoire. Appelez votre enseignant à cette étape.
 
 ![](img/image_08.png)
 
-Le processus dure quelques minutes, la fichiers sont copiés et une vérifications de la copie a lieu.
+Le processus dure quelques minutes, les fichiers sont copiés et une vérification de la copie a lieu.
 
 ![](img/image_09.png)
 
 ![](img/image_10.png)
 
-une fois fini, éjectez la carte SD en toute sécurité puis insérez-la dans la Raspberry Pi.
+Une fois fini, éjectez la carte SD en toute sécurité. Ne démarrez pas encore la Raspberry Pi.
 
 #### Première connexion par UART
-Assurez-vous que la Raspberry est bien allumée et connectée au réseau Wifi de la salle. 
+**📖 Lecture** L'UART est une liaison série asynchrone. Elle transmet les bits sans horloge commune, selon une vitesse et un format convenus entre l'émetteur et le récepteur. Dans ce TP, la console utilise `115200 bauds`, `8N1` et aucun contrôle de flux.
+
+La liaison UART permet d'ouvrir une console locale sur la Raspberry Pi, sans utiliser le réseau. Elle sera utilisée pour le premier démarrage et la configuration du Wi-Fi.
+
+**🛠️ Manipulation / code** Réinsérez la carte SD dans votre PC. Dans la partition `bootfs`, ouvrez le fichier `config.txt` et ajoutez la ligne suivante à la fin du fichier :
+
+```text
+enable_uart=1
+```
+
+Enregistrez le fichier, éjectez proprement la carte SD, puis insérez-la dans la Raspberry Pi.
+
+Utilisez un adaptateur USB-UART en logique 3,3 V. N'utilisez pas d'adaptateur RS-232 et ne branchez pas la broche 5 V de l'adaptateur : ces tensions peuvent endommager la Raspberry Pi. Avec le connecteur GPIO de la Raspberry Pi Zero 2 W, branchez :
+
+| Raspberry Pi | Adaptateur USB-UART |
+| --- | --- |
+| GPIO14 / TXD, broche physique 8 | RX |
+| GPIO15 / RXD, broche physique 10 | TX |
+| GND, par exemple broche physique 6 | GND |
+
+Les lignes TX et RX se croisent.
+
+Schéma de câblage à compléter et à expliquer :
+
+```text
+PC                         Adaptateur USB-UART          Raspberry Pi
+                     +------------------------+
+USB  <-------------->|                        |
+                     | TX --------------------+------> GPIO15 / RXD
+                     | RX <-------------------+------  GPIO14 / TXD
+                     | GND -------------------+------  GND
+                     +------------------------+
+```
+
+**💭 Réflexion** Sur votre compte rendu :
+
+1. Expliquez pourquoi TX est relié à RX et RX à TX.
+2. Expliquez le rôle de GND dans cette liaison.
+3. Que signifie le réglage `115200 8N1` ?
+4. Pourquoi ne faut-il pas connecter la broche 5 V de l'adaptateur aux GPIO de la Raspberry Pi ?
+5. Que se passe-t-il si le terminal série est configuré à une autre vitesse que la Raspberry Pi ?
+
+Branchez le câble USB entre l'adaptateur USB-UART et votre PC. La Raspberry Pi démarre. Le premier démarrage peut prendre plusieurs minutes et afficher plusieurs séquences de démarrage.
+
+Sur un PC Linux, installez `minicom` :
+
+```bash
+sudo apt update
+sudo apt install minicom -y
+```
+
+Repérez le port série créé par l'adaptateur avec :
+
+```bash
+sudo dmesg | grep -E 'ttyUSB|ttyACM'
+```
+
+Le port est souvent `/dev/ttyUSB0`, mais son nom peut être différent. Lancez ensuite la console série avec les paramètres `115200 bauds`, `8N1`, sans contrôle de flux :
+
+```bash
+minicom -D /dev/ttyUSB0 -b 115200
+```
+
+Adaptez `/dev/ttyUSB0` au port trouvé. Après les messages de démarrage, connectez-vous avec l'utilisateur et le mot de passe définis dans Raspberry Pi Imager. Pour quitter `minicom`, utilisez `Ctrl-A`, puis `X`.
+
+Sur Windows, repérez le port COM de l'adaptateur dans le gestionnaire de périphériques et configurez PuTTY en mode `Serial`, avec une vitesse de `115200` bauds. Sur macOS, le périphérique est généralement nommé `/dev/cu.usbserial-xxxx`.
+
+**💭 Réflexion** Comparez la connexion UART et la connexion SSH : quels équipements et quelles configurations sont nécessaires dans chaque cas ? Donnez un avantage et une limite de chaque méthode.
+
+#### Configuration du Wi-Fi
+**🛠️ Manipulation / code** Depuis la console UART, configurez le Wi-Fi et vérifiez l'adresse obtenue.
+Depuis la console UART, lancez l'utilitaire de configuration :
+
+```bash
+sudo raspi-config
+```
+
+Sélectionnez `System Options` > `Wireless LAN`, saisissez le réseau `wifi-ensea` et laissez le mot de passe vide. Quittez le configurateur, puis vérifiez qu'une adresse IP a été attribuée :
+
+```bash
+ip a
+```
+
+Le réseau utilise un portail captif. Ouvrez `http://www.ensea.fr/` depuis un appareil connecté au réseau et terminez l'authentification demandée avant de poursuivre.
+
+Si l'erreur `S1 Wireless Lan error` apparaît, activez la radio Wi-Fi puis relancez `raspi-config` :
+
+```bash
+sudo nmcli radio wifi on
+```
+
+#### Première connexion par SSH
+**📖 Lecture** SSH fournit une connexion distante chiffrée. La première connexion avec un mot de passe sert ici à vérifier le réseau et à préparer l'authentification par clé.
+
+**🛠️ Manipulation / code** Assurez-vous que la Raspberry est bien allumée et connectée au réseau Wifi de la salle. 
 
 Le réseau de la salle est géré par un routeur Mikrotik administré par le professeur : vous n'avez pas la main sur son interface d'administration, donc pas moyen d'aller y consulter la liste des baux DHCP vous-même. On utilise à la place le hostname mDNS que vous avez défini dans Raspberry Pi Imager, qui permet de joindre la Raspberry par son nom directement, sans connaître son adresse IP.
 
@@ -89,12 +187,71 @@ Mettez "votre nom d'utilisateur@nom_de_votre_hostname.local"
 Il vous demandera sur quelle plateforme vous êtes (Linux, Windows ou MacOS), vous mettez "Linux"
 
 Entrez votre mot de passe.
-Revenez sur votre terminal et marquez "mkdir 'nom de votre dossier'" ensuite "cd 'nom de votre dossier'". Le dossier est creer, puis vous tapez "ls" puis "cd..".
+Revenez sur votre terminal et marquez `mkdir nom_de_votre_dossier`, puis `cd nom_de_votre_dossier`. Le dossier est créé. Vérifiez son contenu avec `ls`, puis revenez au dossier précédent avec `cd ..`.
 
 ![](img/image_20.png)
 
-Revenez sur VS code et ouvrez le dossier, créez, ensuite, 3 fichiers "main.py" "MCP3208.py" et "votre_composant.py" 
+Revenez sur VS Code et ouvrez ce dossier à distance. Créez un fichier `test.py` pour vérifier que l'espace de développement fonctionne correctement.
 
-![](img/image_21.png) 
+![](img/image_21.png)
 
-Maintenant il faudra rédiger un code dans les 3 onglets et les reliés ensemble pour que le code puisse fonctionner. 
+Les TP suivants utiliseront ce dossier pour organiser le code de chaque capteur ou actionneur.
+
+#### Sécuriser SSH avec une clé
+**📖 Lecture** Une paire de clés SSH contient :
+
+* une **clé privée**, conservée uniquement sur votre PC et éventuellement protégée par une phrase secrète ;
+* une **clé publique**, installée sur la Raspberry Pi dans `~/.ssh/authorized_keys`.
+
+La clé publique peut être partagée. La clé privée ne doit jamais être envoyée à quelqu'un ni copiée sur la Raspberry Pi.
+
+**🛠️ Manipulation / code** Depuis le terminal de votre PC, générez une paire de clés Ed25519 :
+
+```bash
+ssh-keygen -t ed25519 -C "pc-ensea"
+```
+
+Validez le chemin proposé, généralement `~/.ssh/id_ed25519`, puis choisissez une phrase secrète. Cette phrase secrète protège la clé privée si le fichier est récupéré.
+
+Vérifiez que les deux fichiers ont été créés :
+
+```bash
+ls -l ~/.ssh/id_ed25519 ~/.ssh/id_ed25519.pub
+```
+
+Copiez ensuite la clé publique sur la Raspberry Pi, en remplaçant les deux noms entre chevrons :
+
+```bash
+ssh-copy-id <utilisateur>@<hostname>.local
+```
+
+La commande demande une dernière fois le mot de passe de la Raspberry Pi et ajoute la clé publique dans `~/.ssh/authorized_keys`. Si `ssh-copy-id` n'est pas disponible, utilisez la commande équivalente :
+
+```bash
+cat ~/.ssh/id_ed25519.pub | ssh <utilisateur>@<hostname>.local 'mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys'
+```
+
+Ouvrez une nouvelle connexion pour vérifier que la clé fonctionne :
+
+```bash
+ssh <utilisateur>@<hostname>.local
+```
+
+Si une phrase secrète a été définie, la demande affichée concerne la clé privée, et non le mot de passe du compte Raspberry Pi. Ne fermez pas la session UART ou SSH actuelle avant d'avoir validé cette nouvelle connexion.
+
+**💭 Réflexion** Répondez aux questions suivantes :
+
+1. Où se trouve la clé privée ? Où se trouve la clé publique ?
+2. Pourquoi la clé privée ne doit-elle pas être copiée dans `~/.ssh/authorized_keys` ?
+3. Quel est le rôle de `authorized_keys` ?
+4. Quelle différence faites-vous entre le mot de passe du compte Raspberry Pi et la phrase secrète de la clé privée ?
+5. Pourquoi faut-il tester une nouvelle connexion avant de désactiver l'authentification par mot de passe ?
+6. Quels droits doivent avoir les dossiers et fichiers `.ssh` pour limiter les risques ?
+
+**🛠️ Manipulation / code - optionnel** Une fois l'authentification par clé testée dans un second terminal, vérifiez l'état du serveur SSH :
+
+```bash
+sudo systemctl status ssh --no-pager
+```
+
+Ne désactivez pas l'authentification par mot de passe dans ce TP sans validation de l'enseignant : une erreur de clé ou de permissions pourrait vous empêcher de vous reconnecter.
