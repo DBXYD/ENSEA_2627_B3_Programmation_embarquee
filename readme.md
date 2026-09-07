@@ -41,19 +41,19 @@ Ecrire un driver proprement
 ### Livrables
 
 Les étudiants doivent fournir comme résultats :
-* Capteurs IR + MCP3208 :
-  * Lecture des 8 valeurs de tension.
-  * Détection fonctionelle de la position de la ligne.
-  * Compréhension et justification de l'usage de seuil de détection.
+* Accéléromètre et gyroscope :
+  * Lecture correcte des valeurs en brut.
+  * Conversion en unité physiques (g et dps).
+  * Calculer les angles d'inclinaison X et Y.
 * Driver moteur :
   * Initialisation correcte du driver moteur.
   * Utilisation des fonctions fournies (set_speed(), set_direction(), rotate(), cleanup()).
   * Démonstration qu'il peut avancer en ligne droite, ajuster la vitesse des moteurs en fonction de la position de la ligne, s'arrêter proprement.
   * Compréhension du rôle de la PWM et de la différence de vitesse entre moteur gauche/droite.
-* Accéléromètre et gyroscope :
-  * Lecture correcte des valeurs en brut.
-  * Conversion en unité physiques (g et dps).
-  * Calculer les angles d'inclinaison X et Y.
+* Capteurs IR + MCP3208 :
+  * Lecture des 8 valeurs de tension.
+  * Détection fonctionelle de la position de la ligne.
+  * Compréhension et justification de l'usage de seuil de détection.
 * Compréhension des programmes : 
   * La structure et le rôle du fichier setting.py.
   * Comment communiquent SPI et i2C.
