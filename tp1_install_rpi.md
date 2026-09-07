@@ -1,5 +1,5 @@
 ## TP 1
-### objectif
+### Objectif
 * Configurer la Raspberry Pi Zero
 * Un tutoriel pas a pas est mis en place pour vous aider à installer les fichiers de l'OS qui sont nécessaires au bon fonctionnement de la Raspberry Pi : 
   
@@ -18,9 +18,10 @@ Sélectionnez le bon modèle de RPI : Raspberry Pi Zero 2W
 
 ![](img/image_02.png)
 
-Sélectionnez l'OS adapté à notre utilisation : Raspberry Pi (other) -> L'OS Lite (32-bit)
+Sélectionnez l'OS adapté à notre utilisation : Raspberry Pi (other) -> L'OS Lite (64-bit)
 
 ![](img/image_03.png)
+
 ![](img/image_04.png)
 
 Sélectionnez le support d'installation de l'OS, sélectionnez la carte SD 
@@ -46,10 +47,12 @@ Validez la copie de l'image de l'OS Linux sur la carte SD.
 Le processus dure quelques minutes, la fichiers sont copiés et une vérifications de la copie a lieu.
 
 ![](img/image_09.png)
+
 ![](img/image_10.png)
 
 une fois fini, éjectez la carte SD en toute sécurité puis insérez-la dans la Raspberry Pi.
 
+#### Première connexion par UART
 Assurez-vous que la Raspberry est bien allumée et connectée au réseau Wifi de la salle. 
 
 Le réseau de la salle est géré par un routeur Mikrotik administré par le professeur : vous n'avez pas la main sur son interface d'administration, donc pas moyen d'aller y consulter la liste des baux DHCP vous-même. On utilise à la place le hostname mDNS que vous avez défini dans Raspberry Pi Imager, qui permet de joindre la Raspberry par son nom directement, sans connaître son adresse IP.

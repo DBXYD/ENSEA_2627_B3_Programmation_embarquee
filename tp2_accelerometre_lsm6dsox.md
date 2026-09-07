@@ -1,4 +1,4 @@
-## TP 4
+## TP 2
 ### Objectifs
 
 * Rédigez le code pour l'accéléromètre en i2C.
@@ -8,10 +8,9 @@
 créez trois fichiers python "main.py", et par exemple "setting.py" et "drv_lsm6dsox.py".
 
 Chacun a un rôle bien défini :
-
-main.py -> programme principal, utilise le driver pour afficher les valeurs physiques du capteur.
-setting.py -> définit toutes les constantes nécessaires pour configurer et comprendre le capteur LSM6DSOX.
-drv_lsm6dsox.py -> gère la communication i2C et fournit des fonctions permettant de lire le capteur.
+* main.py -> programme principal, utilise le driver pour afficher les valeurs physiques du capteur.
+* setting.py -> définit toutes les constantes nécessaires pour configurer et comprendre le capteur LSM6DSOX.
+* drv_lsm6dsox.py -> gère la communication i2C et fournit des fonctions permettant de lire le capteur.
 
 #### setting.py
 
