@@ -146,42 +146,46 @@ Nous l'avons lu et fait des tests pour vous : il faut envoyer les informations s
    * password : votre mot de passe (celui utilisé partout à l'école pour vous identifier)
 * User-Agent: Mozilla, c'est une instruction supplémentaire pour se faire passer pour un navigateur Mozilla, ceci est nécessaire pour que notre requête soit traitée.
 
+```bash
 curl -d @data.txt -X POST https://ucopia.ensea.fr/portal_api.php -H "User-Agent: Mozilla"
+```
 
 Afin de ne pas écrire l'identifiant et le mot de passe en clair dans la console et que n'importe qui puisse le relire avec la commande history (qui affiche toutes les commandes tapées depuis la création de votre compte), nous vous invitons à écrire ces données dans un fichier uniquement accessible par vous même :
 
+```bash
 nano data.txt
-
 action=authenticate&login=<login>&password=<password>
+```
 
 Il est possible qu'au cours du TP vous n'ayez plus accès à internet car vous vous êtes fait déconnecté du réseau, un "timeout" trop faible est paramétré et si vous ne faites pas de requête web pendant un laps de temps, le routeur oublie votre authentification, pour palier à ce problème, il vous suffit de relancer la requête curl.
  
 Remarque :
 nano est un éditeur de texte en ligne de commande, il faut connaitre quelques raccourcis pour pouvoir l'utiliser :
-
-    Ctrl+S : pour sauvegarder vos modifications
-    Ctrl+X : pour quitter le logiciel
+```
+Ctrl+S : pour sauvegarder vos modifications
+Ctrl+X : pour quitter le logiciel
+```
 
 Lancer la requête précédemment proposée et analyser le retour du serveur ucopia.
-Essayer de récupérer une page web sur internet, le site perdu.com vous propose une page minimaliste et compréhensible sans avoir un navigateur avec une fenêtre pour afficher le fichier html et surtout afficher le code css (css = Cascading Style Sheets, correspond au code de mise en page des pages web, il est inexistant lorsque vous faites une requête avec curl).
+Essayer de récupérer une page web sur internet (avec curl), le site perdu.com vous propose une page minimaliste et compréhensible sans avoir un navigateur avec une fenêtre pour afficher le fichier html et surtout afficher le code css (css = Cascading Style Sheets, correspond au code de mise en page des pages web, il est inexistant lorsque vous faites une requête avec curl).
 
 
 #### Première connexion par SSH
 **📖 Lecture** SSH fournit une connexion distante chiffrée. La première connexion avec un mot de passe sert ici à vérifier le réseau et à préparer l'authentification par clé.
 
-**🛠️ Manipulation / code** Assurez-vous que la Raspberry est bien allumée et connectée au réseau Wifi de la salle. 
+**🛠️ Manipulation / code** Assurez-vous que la Raspberry est bien allumée et connectée au réseau Wifi Eduroam. 
 
-Le réseau de la salle est géré par un routeur Mikrotik administré par le professeur : vous n'avez pas la main sur son interface d'administration, donc pas moyen d'aller y consulter la liste des baux DHCP vous-même. On utilise à la place le hostname mDNS que vous avez défini dans Raspberry Pi Imager, qui permet de joindre la Raspberry par son nom directement, sans connaître son adresse IP.
+<!-- Le réseau de la salle est géré par un routeur Mikrotik administré par le professeur : vous n'avez pas la main sur son interface d'administration, donc pas moyen d'aller y consulter la liste des baux DHCP vous-même. On utilise à la place le hostname mDNS que vous avez défini dans Raspberry Pi Imager, qui permet de joindre la Raspberry par son nom directement, sans connaître son adresse IP. -->
 
 Ouvrez un terminal sur votre PC Linux et tapez "ping nom_de_votre_hostname.local" (remplacez "nom_de_votre_hostname" par le hostname choisi à l'étape de flash).
 
 ![](img/image_14.png)
 
-si vous avez des réponses affichées à l'écran, ça veut dire que votre PC voit votre Raspberry sur le réseau donc la connexion réseau fonctionne. (pour l'arrêter, tapez : "ctrl + C")
+<!-- si vous avez des réponses affichées à l'écran, ça veut dire que votre PC voit votre Raspberry sur le réseau donc la connexion réseau fonctionne. (pour l'arrêter, tapez : "ctrl + C")
 
 Si le ping ne répond pas (résolution mDNS parfois indisponible selon le PC), deux solutions de secours :
 * scannez le sous-réseau avec nmap : "nmap -sn 192.168.X.0/24" (remplacez X par le sous-réseau de la salle) et repérez l'IP dont le nom d'hôte correspond au hostname choisi.
-* demandez au professeur l'adresse IP attribuée à votre Raspberry sur le Mikrotik.
+* demandez au professeur l'adresse IP attribuée à votre Raspberry sur le Mikrotik. -->
 
 Tapez "ssh utilisateur@nom_de_votre_hostname.local" (ou "ssh utilisateur@adresse_ip" si vous êtes passés par la solution de secours). Il vous demandera votre mot de passe (rien ne sera affiché pendant que vous écrirez, c'est normal).
 
