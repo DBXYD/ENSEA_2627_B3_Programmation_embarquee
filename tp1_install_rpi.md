@@ -122,13 +122,49 @@ Sélectionnez `System Options` > `Wireless LAN`, saisissez le réseau `wifi-ense
 ip a
 ```
 
-Le réseau utilise un portail captif. Ouvrez `http://www.ensea.fr/` depuis un appareil connecté au réseau et terminez l'authentification demandée avant de poursuivre.
-
 Si l'erreur `S1 Wireless Lan error` apparaît, activez la radio Wi-Fi puis relancez `raspi-config` :
 
 ```bash
 sudo nmcli radio wifi on
 ```
+
+**💭 Réflexion** 
+* Notez l'adresse IP obtenue.
+* Avez vous accès à internet ?
+
+Vous êtes à présent connecter au réseau 'wifi-ensea' mais n'avez pas de possibilité d'ouvrir le portail captif afin de saisir votre mot de passe. Nous devons nous mêmes envoyer ces informations pour débloquer la connexion.
+
+Pour permette de vous connecter, il faut utiliser l'API fournie par la service ucopia qui est utilisé. Vous pouvez trouver la documentation sur internet ici (https://ucopia.com/wp-content/uploads/2016/07/Ucp_Portal_API_Guide.pdf).
+
+Nous l'avons lu et fait des tests pour vous : il faut envoyer les informations suivante au serveur pour avoir accès à internet :
+
+* URL : https://ucopia.ensea.fr/portal_api.php
+* l'option "-X POST" : pour demander à curl d'envoyer des données au serveur et non pas seulement envoyer une requête pour recevoir une page web,
+* Données :
+   * authenticate : login
+   * login : votre nom d'utilisateur (celui utilisé partout à l'école pour vous identifier)
+   * password : votre mot de passe (celui utilisé partout à l'école pour vous identifier)
+* User-Agent: Mozilla, c'est une instruction supplémentaire pour se faire passer pour un navigateur Mozilla, ceci est nécessaire pour que notre requête soit traitée.
+
+curl -d @data.txt -X POST https://ucopia.ensea.fr/portal_api.php -H "User-Agent: Mozilla"
+
+Afin de ne pas écrire l'identifiant et le mot de passe en clair dans la console et que n'importe qui puisse le relire avec la commande history (qui affiche toutes les commandes tapées depuis la création de votre compte), nous vous invitons à écrire ces données dans un fichier uniquement accessible par vous même :
+
+nano data.txt
+
+action=authenticate&login=<login>&password=<password>
+
+Il est possible qu'au cours du TP vous n'ayez plus accès à internet car vous vous êtes fait déconnecté du réseau, un "timeout" trop faible est paramétré et si vous ne faites pas de requête web pendant un laps de temps, le routeur oublie votre authentification, pour palier à ce problème, il vous suffit de relancer la requête curl.
+ 
+Remarque :
+nano est un éditeur de texte en ligne de commande, il faut connaitre quelques raccourcis pour pouvoir l'utiliser :
+
+    Ctrl+S : pour sauvegarder vos modifications
+    Ctrl+X : pour quitter le logiciel
+
+Lancer la requête précédemment proposée et analyser le retour du serveur ucopia.
+Essayer de récupérer une page web sur internet, le site perdu.com vous propose une page minimaliste et compréhensible sans avoir un navigateur avec une fenêtre pour afficher le fichier html et surtout afficher le code css (css = Cascading Style Sheets, correspond au code de mise en page des pages web, il est inexistant lorsque vous faites une requête avec curl).
+
 
 #### Première connexion par SSH
 **📖 Lecture** SSH fournit une connexion distante chiffrée. La première connexion avec un mot de passe sert ici à vérifier le réseau et à préparer l'authentification par clé.
