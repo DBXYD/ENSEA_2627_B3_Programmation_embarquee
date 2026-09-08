@@ -141,23 +141,26 @@ Depuis la console UART, lancez l'utilitaire de configuration :
 sudo raspi-config
 ```
 
-Sélectionnez `System Options` > `Wireless LAN`, saisissez le réseau `wifi-ensea` et laissez le mot de passe vide. Quittez le configurateur, puis vérifiez qu'une adresse IP a été attribuée :
+Sélectionnez `System Options` > `Wireless LAN`, saisissez le réseau `D265_AP` et 'ilovelinux' pour le mot de passe vide. Quittez le configurateur, puis vérifiez qu'une adresse IP a été attribuée :
 
 ```bash
 ip a
 ```
 
-Si l'erreur `S1 Wireless Lan error` apparaît, activez la radio Wi-Fi puis relancez `raspi-config` :
+Si l'erreur `S1 Wireless Lan error` apparaît, désctiver puis ré-activez la radio Wi-Fi puis relancez `raspi-config` :
 
 ```bash
+sudo nmcli radio wifi off
+
 sudo nmcli radio wifi on
 ```
 
 **💭 Réflexion** 
 * Notez l'adresse IP obtenue.
 * Avez vous accès à internet ?
+* Pourquoi la commande `sudo` fonctionne ici ?
 
-Vous êtes à présent connecter au réseau 'wifi-ensea' mais n'avez pas de possibilité d'ouvrir le portail captif afin de saisir votre mot de passe. Nous devons nous mêmes envoyer ces informations pour débloquer la connexion.
+<!-- <!-- Vous êtes à présent connecter au réseau 'wifi-ensea' mais n'avez pas de possibilité d'ouvrir le portail captif afin de saisir votre mot de passe. Nous devons nous mêmes envoyer ces informations pour débloquer la connexion.
 
 Pour permette de vous connecter, il faut utiliser l'API fournie par la service ucopia qui est utilisé. Vous pouvez trouver la documentation sur internet ici (https://ucopia.com/wp-content/uploads/2016/07/Ucp_Portal_API_Guide.pdf).
 
@@ -182,9 +185,9 @@ nano data.txt
 action=authenticate&login=<login>&password=<password>
 ```
 
-Il est possible qu'au cours du TP vous n'ayez plus accès à internet car vous vous êtes fait déconnecté du réseau, un "timeout" trop faible est paramétré et si vous ne faites pas de requête web pendant un laps de temps, le routeur oublie votre authentification, pour palier à ce problème, il vous suffit de relancer la requête curl.
+Il est possible qu'au cours du TP vous n'ayez plus accès à internet car vous vous êtes fait déconnecté du réseau, un "timeout" trop faible est paramétré et si vous ne faites pas de requête web pendant un laps de temps, le routeur oublie votre authentification, pour palier à ce problème, il vous suffit de relancer la requête curl. -->
  
-Remarque :
+<!-- Remarque :
 nano est un éditeur de texte en ligne de commande, il faut connaitre quelques raccourcis pour pouvoir l'utiliser :
 ```
 Ctrl+S : pour sauvegarder vos modifications
@@ -194,7 +197,7 @@ Ctrl+X : pour quitter le logiciel
 Lancer la requête précédemment proposée et analyser le retour du serveur ucopia.
 Essayer de récupérer une page web sur internet (avec curl), le site perdu.com vous propose une page minimaliste et compréhensible sans avoir un navigateur avec une fenêtre pour afficher le fichier html et surtout afficher le code css (css = Cascading Style Sheets, correspond au code de mise en page des pages web, il est inexistant lorsque vous faites une requête avec curl).
 
-
+ -->
 #### Première connexion par SSH
 **📖 Lecture** SSH fournit une connexion distante chiffrée. La première connexion avec un mot de passe sert ici à vérifier le réseau et à préparer l'authentification par clé.
 
