@@ -1,6 +1,6 @@
 ## TP 1
 ### Objectif
-* Configurer la Raspberry Pi Zero
+* Configurer la Raspberry Pi Zero 2W
 * Un tutoriel pas a pas est mis en place pour vous aider à installer les fichiers de l'OS qui sont nécessaires au bon fonctionnement de la Raspberry Pi : 
   
    1. Flasher la carte SD 
@@ -12,7 +12,7 @@
 #### Flasher la carte SD
 **🛠️ Manipulation / code** Réalisez le flashage avec Raspberry Pi Imager en suivant les étapes ci-dessous.
 
-Allez sur https://www.raspberrypi.com/software/ et installez Raspberry Pi Imager selon votre type de PC (Linux).
+Allez sur https://www.raspberrypi.com/software/ et installez Raspberry Pi Imager selon votre type de PC (Linux). Il est possible que le logiciel soit déjà installé dans la salle.
 
 ![](img/image_01.png)
 
@@ -66,30 +66,11 @@ La liaison UART permet d'ouvrir une console locale sur la Raspberry Pi, sans uti
 ```text
 enable_uart=1
 ```
-
 Enregistrez le fichier, éjectez proprement la carte SD, puis insérez-la dans la Raspberry Pi.
 
 Utilisez un adaptateur USB-UART en logique 3,3 V. N'utilisez pas d'adaptateur RS-232 et ne branchez pas la broche 5 V de l'adaptateur : ces tensions peuvent endommager la Raspberry Pi. Avec le connecteur GPIO de la Raspberry Pi Zero 2 W, branchez :
 
-| Raspberry Pi | Adaptateur USB-UART |
-| --- | --- |
-| GPIO14 / TXD, broche physique 8 | RX |
-| GPIO15 / RXD, broche physique 10 | TX |
-| GND, par exemple broche physique 6 | GND |
-
 Les lignes TX et RX se croisent.
-
-Schéma de câblage à compléter et à expliquer :
-
-```text
-PC                         Adaptateur USB-UART          Raspberry Pi
-                     +------------------------+
-USB  <-------------->|                        |
-                     | TX --------------------+------> GPIO15 / RXD
-                     | RX <-------------------+------  GPIO14 / TXD
-                     | GND -------------------+------  GND
-                     +------------------------+
-```
 
 **💭 Réflexion** Sur votre compte rendu :
 
@@ -98,10 +79,11 @@ USB  <-------------->|                        |
 3. Que signifie le réglage `115200 8N1` ?
 4. Pourquoi ne faut-il pas connecter la broche 5 V de l'adaptateur aux GPIO de la Raspberry Pi ?
 5. Que se passe-t-il si le terminal série est configuré à une autre vitesse que la Raspberry Pi ?
+6. Dessinez un schéma de câblage représentant le sheild utiliser.
 
-Branchez le câble USB entre l'adaptateur USB-UART et votre PC. La Raspberry Pi démarre. Le premier démarrage peut prendre plusieurs minutes et afficher plusieurs séquences de démarrage.
+**Appeler votre professeur avant de brancher le câble USB** entre l'adaptateur USB-UART et votre PC. La Raspberry Pi démarre. Le premier démarrage peut prendre plusieurs minutes et afficher plusieurs séquences de démarrage.
 
-Sur un PC Linux, installez `minicom` :
+Sur un PC Linux, si besoin, installez `minicom` :
 
 ```bash
 sudo apt update
