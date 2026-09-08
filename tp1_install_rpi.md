@@ -66,6 +66,31 @@ La liaison UART permet d'ouvrir une console locale sur la Raspberry Pi, sans uti
 ```text
 enable_uart=1
 ```
+**🛠️ Manipulation / code**
+Dans la même partition, créer userconf.txt
+```
+monuser:$6$xxxxxxxxxxxxxxxx$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+Le mot de passe ne doit pas être écrit en clair : il faut mettre son hash SHA-512, il sera ainsi chiffré sur la carte SD.
+
+Dans un terminal, linux éxécutez la commande :
+```
+openssl passwd -6
+```
+
+Le programme demendera le mot de passe à chiffrer et retournera quelque chose du genre :
+
+```
+$6$abc123$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+Change le fichier userconf.txt correspondant à votre configuration : 
+```
+monuser:$6$abc123$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+Éjecte proprement la carte, remets-la dans le RPi Zero 2W et démarre-le.
 Enregistrez le fichier, éjectez proprement la carte SD, puis insérez-la dans la Raspberry Pi.
 
 Utilisez un adaptateur USB-UART en logique 3,3 V. N'utilisez pas d'adaptateur RS-232 et ne branchez pas la broche 5 V de l'adaptateur : ces tensions peuvent endommager la Raspberry Pi. Avec le connecteur GPIO de la Raspberry Pi Zero 2 W, branchez :
